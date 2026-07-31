@@ -32,6 +32,19 @@ custom rules are enabled. Expirations must fall within the configured
 tolerance of the expected expiration. Sales and cancellations must fall
 within the candidate auction's effective lifetime, including tolerance.
 
+## Appraiser Seller Matching
+
+Enable **Match clicked seller** beneath Appraiser's competing-auction table,
+then click anywhere in a seller's row. Appraiser copies that auction's exact
+per-item starting bid and buyout, switches the item to Fixed pricing, and
+disables ordinary competition matching. The checkbox does not post an auction.
+Alt-clicking a seller continues to manage the seller ignore list.
+
+Seller-matched values bypass Appraiser's optional rounding so posting a
+different stack size preserves the selected auction's per-item prices.
+Manually changing the price, pricing model, or ordinary matching option clears
+the seller-match marker.
+
 ## Installation
 
 1. Exit the game completely.

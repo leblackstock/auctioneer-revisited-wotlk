@@ -7,11 +7,15 @@ const luaparse = require("luaparse");
 const root = path.resolve(__dirname, "..");
 const modifiedRuntimeFiles = [
   "Auc-Advanced/CoreConfig.lua",
+  "Auc-Advanced/CoreAppraiserRevisitedStrings.lua",
   "Auc-Advanced/CoreManifest.lua",
   "Auc-Advanced/CorePost.lua",
   "Auc-Advanced/CoreServerRules.lua",
   "Auc-Advanced/CoreServerRulesStrings.lua",
   "Auc-Advanced/CoreSettings.lua",
+  "Auc-Advanced/Modules/Auc-Util-Appraiser/Appraiser.lua",
+  "Auc-Advanced/Modules/Auc-Util-Appraiser/AppraiserSellerMatch.lua",
+  "Auc-Advanced/Modules/Auc-Util-Appraiser/AprFrame.lua",
   "BeanCounter/BeanCounterConfig.lua",
   "BeanCounter/BeanCounterFrames.lua",
   "BeanCounter/BeanCounterMail.lua",

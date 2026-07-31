@@ -479,6 +479,27 @@ function private.CreateFrames()
 		return rDef,gDef,bDef
 	end
 
+	function frame.IsSellerMatched(sig)
+		sig = sig or frame.salebox.sig
+		if not sig then return false end
+		return not not get("util.appraiser.item."..sig..".sellermatch")
+	end
+
+	function frame.ClearSellerMatch()
+		if not frame.salebox.sig then return end
+		set("util.appraiser.item."..frame.salebox.sig..".sellermatch")
+	end
+
+	function frame.GetPostingBid(value, sig)
+		if frame.IsSellerMatched(sig) then return value end
+		return lib.RoundBid(value)
+	end
+
+	function frame.GetPostingBuy(value, sig)
+		if frame.IsSellerMatched(sig) then return value end
+		return lib.RoundBuy(value)
+	end
+
 	function frame.InitControls()
 		frame.valuecache = {}
 
@@ -734,6 +755,7 @@ function private.CreateFrames()
 			set("util.appraiser.item."..frame.salebox.sig..".duration", private.durations[duration][1])
 			frame.UpdatePricing()
 		elseif matcher ~= frame.valuecache.matcher then
+			frame.ClearSellerMatch()
 			frame.valuecache.matcher = matcher
 			if matcher then
 				matcher = "on"
@@ -743,6 +765,7 @@ function private.CreateFrames()
 			set("util.appraiser.item."..frame.salebox.sig..".match", matcher)
 			frame.UpdatePricing()
 		elseif bid ~= frame.valuecache.bid then
+			frame.ClearSellerMatch()
 			frame.valuecache.bid = bid
 			frame.salebox.matcher:SetChecked(false)
 			frame.valuecache.matcher = frame.salebox.matcher:GetChecked()
@@ -755,6 +778,7 @@ function private.CreateFrames()
 			set("util.appraiser.item."..frame.salebox.sig..".fixed.buy", buy)
 			frame.UpdatePricing()
 		elseif buy ~= frame.valuecache.buy then
+			frame.ClearSellerMatch()
 			frame.valuecache.buy = buy
 			frame.salebox.matcher:SetChecked(false)
 			frame.valuecache.matcher = frame.salebox.matcher:GetChecked()
@@ -767,6 +791,7 @@ function private.CreateFrames()
 			set("util.appraiser.item."..frame.salebox.sig..".fixed.buy", buy)
 			frame.UpdatePricing()
 		elseif model ~= frame.valuecache.model then
+			frame.ClearSellerMatch()
 			set("util.appraiser.item."..frame.salebox.sig..".model", model)
 			frame.valuecache.model = model
 			if model == "fixed" then
@@ -978,8 +1003,8 @@ function private.CreateFrames()
 					if (maxStax > 0) then
 						frame.manifest.lines:Clear()
 						frame.manifest.lines:Add(_TRANS('APPR_Interface_LotsOfStacks'):format(maxStax, curSize))--%d lots of %dx stacks:
-						bidVal = lib.RoundBid(curBid * curSize)
-						buyVal = lib.RoundBuy(curBuy * curSize)
+						bidVal = frame.GetPostingBid(curBid * curSize)
+						buyVal = frame.GetPostingBuy(curBuy * curSize)
 						depositVal = GetDepositCost(frame.salebox.link, depositHours, depositFaction, curSize)
 
 						r,g,b=nil,nil,nil
@@ -1000,8 +1025,8 @@ function private.CreateFrames()
 						totalBuy = totalBuy + (buyVal * maxStax)
 					end
 					if curNumber == -1 and remain > 0 then
-						bidVal = lib.RoundBid(curBid * remain)
-						buyVal = lib.RoundBuy(curBuy * remain)
+						bidVal = frame.GetPostingBid(curBid * remain)
+						buyVal = frame.GetPostingBuy(curBuy * remain)
 						depositVal = GetDepositCost(frame.salebox.link, depositHours, depositFaction, remain)
 
 						frame.manifest.lines:Add(_TRANS('APPR_Interface_LotsOfStacks') :format(1, remain))--%d lots of %dx stacks:
@@ -1026,8 +1051,8 @@ function private.CreateFrames()
 					frame.salebox.number.label:SetText(_TRANS('APPR_Interface_NumberStacks'):format(curNumber, curNumber*curSize))--Number: %d stacks = %d
 					frame.manifest.lines:Clear()
 					frame.manifest.lines:Add(_TRANS('APPR_Interface_LotsOfStacks'):format(curNumber, curSize))--%d lots of %dx stacks:
-					bidVal = lib.RoundBid(curBid * curSize)
-					buyVal = lib.RoundBuy(curBuy * curSize)
+					bidVal = frame.GetPostingBid(curBid * curSize)
+					buyVal = frame.GetPostingBuy(curBuy * curSize)
 					depositVal = GetDepositCost(frame.salebox.link, depositHours, depositFaction, curSize)
 
 					r,g,b=nil,nil,nil
@@ -1064,8 +1089,8 @@ function private.CreateFrames()
 				if curNumber > 0 then
 					frame.manifest.lines:Clear()
 					frame.manifest.lines:Add(_TRANS('APPR_Interface_Items'):format(curNumber))--%d items
-					bidVal = lib.RoundBid(curBid)
-					buyVal = lib.RoundBuy(curBuy)
+					bidVal = frame.GetPostingBid(curBid)
+					buyVal = frame.GetPostingBuy(curBuy)
 					depositVal = GetDepositCost(frame.salebox.link, depositHours, depositFaction)
 
 					r,g,b=nil,nil,nil
@@ -1445,8 +1470,8 @@ function private.CreateFrames()
 
 			if (number < 0) then
 				if (fullStacks > 0) then
-					bidVal = lib.RoundBid(itemBid * stack)
-					buyVal = lib.RoundBuy(itemBuy * stack)
+					bidVal = frame.GetPostingBid(itemBid * stack, sig)
+					buyVal = frame.GetPostingBuy(itemBuy * stack, sig)
 					if (buyVal ~= 0 and bidVal > buyVal) then buyVal = bidVal end
 					if dryRun then
 						aucPrint(" ".._TRANS('APPR_Help_PretendingPostStacks'):format(fullStacks, stack, AucAdvanced.Coins(bidVal, true), AucAdvanced.Coins(buyVal, true)))--- Pretending to post {{%d}} stacks of {{%d}} at {{%s}} min and {{%s}} buyout per stack
@@ -1465,8 +1490,8 @@ function private.CreateFrames()
 					totalNum = totalNum + (stack * fullStacks)
 				end
 				if (number == -1 and remain > 0) then
-					bidVal = lib.RoundBid(itemBid * remain)
-					buyVal = lib.RoundBuy(itemBuy * remain)
+					bidVal = frame.GetPostingBid(itemBid * remain, sig)
+					buyVal = frame.GetPostingBuy(itemBuy * remain, sig)
 					if (buyVal ~= 0 and bidVal > buyVal) then buyVal = bidVal end
 					if dryRun then
 						aucPrint(" ".._TRANS('APPR_Help_PretendingPostStacks'):format(1, remain, AucAdvanced.Coins(bidVal, true), AucAdvanced.Coins(buyVal, true)))--- Pretending to post {{%d}} stacks of {{%d}} at {{%s}} min and {{%s}} buyout per stack
@@ -1485,8 +1510,8 @@ function private.CreateFrames()
 					totalNum = totalNum + remain
 				end
 			else
-				bidVal = lib.RoundBid(itemBid * stack)
-				buyVal = lib.RoundBuy(itemBuy * stack)
+				bidVal = frame.GetPostingBid(itemBid * stack, sig)
+				buyVal = frame.GetPostingBuy(itemBuy * stack, sig)
 				if (buyVal ~= 0 and bidVal > buyVal) then buyVal = bidVal end
 				if dryRun then
 					aucPrint(" ".._TRANS('APPR_Help_PretendingPostStacks'):format(number, stack, AucAdvanced.Coins(bidVal, true), AucAdvanced.Coins(buyVal, true)))--- Pretending to post {{%d}} stacks of {{%d}} at {{%s}} min and {{%s}} buyout per stack
@@ -1506,8 +1531,8 @@ function private.CreateFrames()
 			end
 		else
 			if number < 0 then number = total end
-			bidVal = lib.RoundBid(itemBid)
-			buyVal = lib.RoundBuy(itemBuy)
+			bidVal = frame.GetPostingBid(itemBid, sig)
+			buyVal = frame.GetPostingBuy(itemBuy, sig)
 			if (buyVal ~= 0 and bidVal > buyVal) then buyVal = bidVal end
 			if dryRun then
 				aucPrint(_TRANS('APPR_Help_PretendingPostStacks'):format(number, stack, AucAdvanced.Coins(bidVal, true), AucAdvanced.Coins(buyVal, true)))--- Pretending to post {{%d}} stacks of {{%d}} at {{%s}} min and {{%s}} buyout per stack
@@ -2537,8 +2562,43 @@ function private.CreateFrames()
 		end
 	end
 
-	function private.onClick(button, row, index)
-		if (IsAltKeyDown()) and frame.imageview.sheet.labels[index]:GetText() == "Seller" then
+	function private.MatchSelectedSeller()
+		local selected = frame.imageview.sheet:GetSelection()
+		local seller, bid, buyout = lib.GetSellerMatchPrices(selected)
+		if not seller then
+			aucPrint(_TRANS('APPR_Help_SellerPriceUnavailable'))
+			return
+		end
+		if not frame.salebox.sig then return end
+
+		local itemSetting = "util.appraiser.item."..frame.salebox.sig
+		frame.salebox.matcher:SetChecked(false)
+		frame.valuecache.matcher = false
+		set(itemSetting..".match", "off")
+		set(itemSetting..".model", "fixed")
+		set(itemSetting..".fixed.bid", bid)
+		set(itemSetting..".fixed.buy", buyout)
+		set(itemSetting..".sellermatch", seller)
+		lib.ClearItem()
+
+		frame.salebox.model.value = "fixed"
+		frame.salebox.model:UpdateValue()
+		frame.valuecache.model = "fixed"
+		frame.UpdatePricing()
+		frame.UpdateDisplay()
+
+		aucPrint(_TRANS('APPR_Help_SellerPriceMatched'):format(
+			seller,
+			AucAdvanced.Coins(bid, true),
+			AucAdvanced.Coins(buyout, true)
+		))
+	end
+
+	function private.onClick(button, row, index, mouseButton)
+		if mouseButton ~= "LeftButton" then return end
+
+		if IsAltKeyDown() then
+			if frame.imageview.sheet.labels[index]:GetText() ~= _TRANS('APPR_Interface_Seller') then return end
 			local seller = frame.imageview.sheet.rows[row][index]:GetText()
 			if not seller or not AucAdvanced.Modules.Filter.Basic or not AucAdvanced.Modules.Filter.Basic.IsPlayerIgnored then frame.sellerIgnore:Hide() return end
 
@@ -2555,6 +2615,8 @@ function private.CreateFrames()
 				frame.sellerIgnore.yes:SetScript("OnClick", function() BF_IgnoreList_Remove( seller ) frame.sellerIgnore:Hide() end)
 				frame.sellerIgnore.help:SetText(_TRANS('APPR_Interface_RemovePlayerIgnore'):format("|CFFFFFFFF", seller))--Remove player from ignore list %s%s
 			end
+		elseif frame.imageview.purchase.matchSeller:GetChecked() then
+			private.MatchSelectedSeller()
 		end
 	end
 	--ignore/unignore seller GUI
@@ -2622,6 +2684,23 @@ function private.CreateFrames()
 		bgFile = "Interface\\QuestFrame\\UI-QuestTitleHighlight"
 	})
 	frame.imageview.purchase:SetBackdropColor(0.5, 0.5, 0.5, 1)
+
+	frame.imageview.purchase.matchSeller = CreateFrame("CheckButton", "AppraiserMatchSeller", frame.imageview.purchase, "OptionsCheckButtonTemplate")
+	frame.imageview.purchase.matchSeller:SetPoint("RIGHT", frame.imageview.purchase, "RIGHT", -135, 0)
+	frame.imageview.purchase.matchSeller:SetHeight(20)
+	frame.imageview.purchase.matchSeller:SetWidth(20)
+	frame.imageview.purchase.matchSeller:SetChecked(get("util.appraiser.matchseller"))
+	frame.imageview.purchase.matchSeller:SetScript("OnClick", function(self)
+		set("util.appraiser.matchseller", self:GetChecked() and true or false)
+	end)
+	frame.imageview.purchase.matchSeller:SetScript("OnEnter", function(self)
+		return frame.SetButtonTooltip(self, _TRANS('APPR_HelpTooltip_MatchSellerPrice'))
+	end)
+	frame.imageview.purchase.matchSeller:SetScript("OnLeave", function() return GameTooltip:Hide() end)
+
+	frame.imageview.purchase.matchSeller.label = frame.imageview.purchase.matchSeller:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
+	frame.imageview.purchase.matchSeller.label:SetPoint("LEFT", frame.imageview.purchase.matchSeller, "RIGHT", 0, 0)
+	frame.imageview.purchase.matchSeller.label:SetText(_TRANS('APPR_Interface_MatchSellerPrice'))
 
 	frame.imageview.purchase.buy = CreateFrame("Button", nil, frame.imageview.purchase, "OptionsButtonTemplate")
 	frame.imageview.purchase.buy:SetPoint("TOPLEFT", frame.imageview.purchase, "TOPLEFT", 5, 0)
@@ -2781,7 +2860,8 @@ function private.CreateFrames()
 		if (callback == "OnMouseDownCell")  then
 			private.onSelect()
 		elseif (callback == "OnClickCell") then
-			private.onClick(button, row, column)
+			-- ScrollSheet places the OnClick mouse button in this shared callback slot.
+			private.onClick(button, row, column, curDir)
 		elseif (callback == "ColumnOrder") then
 			set("util.appraiser.columnorder", order)
 		elseif (callback == "ColumnWidthSet") then

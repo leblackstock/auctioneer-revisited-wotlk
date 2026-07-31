@@ -1,5 +1,12 @@
 # Changelog
 
+## Unreleased
+
+- Added an opt-in Appraiser control that copies a clicked seller's exact
+  per-item bid and buyout into Fixed pricing.
+- Seller-matched prices bypass the ordinary matcher and optional rounding so
+  different stack sizes retain the selected auction's per-item prices.
+
 ## 5.9.4961-Revisited.1
 
 - Added profile-aware Standard WotLK and Hellscream server-rule presets.

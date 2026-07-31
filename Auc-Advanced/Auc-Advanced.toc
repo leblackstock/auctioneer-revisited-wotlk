@@ -21,6 +21,7 @@ Libs\Load.xml
 CoreModule.lua
 CoreStrings.lua
 CoreServerRulesStrings.lua
+CoreAppraiserRevisitedStrings.lua
 CoreConst.lua
 
 CoreMain.lua

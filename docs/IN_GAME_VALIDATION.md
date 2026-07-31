@@ -34,6 +34,23 @@ release.
 - Confirm no `Failure for completedAuctions`, `failedAuctions`, or
   `cancelledAuctions` message is produced for the tested records.
 
+## Appraiser Seller Matching
+
+- Select an item in Appraiser and refresh its competing auctions.
+- Enable **Match clicked seller** beneath the results.
+- Click a seller row with both a bid and buyout.
+- Confirm Appraiser changes the item to Fixed pricing and unchecks ordinary
+  price matching.
+- Confirm Bid per item and Buy per item exactly match the selected row's
+  Min/ea and Buy/ea values.
+- Change the posting stack size and confirm the displayed stack totals retain
+  the same per-item prices, even when Appraiser rounding is enabled.
+- Alt-click the same seller and confirm the existing ignore dialog still
+  opens without changing the posting price.
+- Click a bid-only auction and confirm Appraiser leaves the current price
+  unchanged.
+- Confirm no auction is queued until the normal Post Items command is used.
+
 ## Restore
 
 - Exit the game.
