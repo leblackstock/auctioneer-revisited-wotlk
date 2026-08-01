@@ -37,10 +37,10 @@ local KEY_TOLERANCE_HOURS = "core.serverrules.tolerancehours"
 local STANDARD_MINIMUM_DEPOSIT = 100
 local STANDARD_TOLERANCE_HOURS = 6
 
-settings.SetDefault(KEY_ENABLED, false)
-settings.SetDefault(KEY_DEPOSIT_PERCENT, 100)
-settings.SetDefault(KEY_MINIMUM_DEPOSIT, STANDARD_MINIMUM_DEPOSIT)
-settings.SetDefault(KEY_DURATION_MULTIPLIER, 1)
+settings.SetDefault(KEY_ENABLED, true)
+settings.SetDefault(KEY_DEPOSIT_PERCENT, 20)
+settings.SetDefault(KEY_MINIMUM_DEPOSIT, 1)
+settings.SetDefault(KEY_DURATION_MULTIPLIER, 4)
 settings.SetDefault(KEY_TOLERANCE_HOURS, STANDARD_TOLERANCE_HOURS)
 
 local function getNumber(key, fallback, minimum, maximum)
@@ -146,7 +146,7 @@ end
 
 function lib.PresetSetting(operation, value)
 	if operation == "getdefault" then
-		return "standard"
+		return "hellscream"
 	elseif operation == "getsetting" then
 		return lib.GetPreset()
 	elseif operation == "set" then

@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Made the Hellscream server-rule preset the default for profiles without
+  saved server-rule values.
 - Added an opt-in Appraiser control that copies a clicked seller's exact
   per-item bid and buyout into Fixed pricing.
 - Seller-matched prices bypass the ordinary matcher and optional rounding so

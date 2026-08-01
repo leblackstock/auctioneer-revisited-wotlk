@@ -52,20 +52,21 @@ function runLua(assertions) {
 test("production deposit rules implement Standard and Hellscream presets", () => {
   runLua(`
     local rules = AucAdvanced.ServerRules
-    assert(rules.GetPreset() == "standard")
-    assert(rules.AdjustDeposit(5376) == 5376)
-    assert(rules.AdjustDeposit(0) == 100)
-
-    rules.ApplyPreset("hellscream")
     assert(rules.GetPreset() == "hellscream")
     assert(rules.AdjustDeposit(5376) == 1075)
     assert(rules.AdjustDeposit(338) == 67)
     assert(rules.AdjustDeposit(0) == 1)
+    assert(rules.GetDurationMultiplier() == 4)
+
+    assert(rules.PresetSetting("getdefault") == "hellscream")
 
     rules.ApplyPreset("standard")
     assert(rules.GetPreset() == "standard")
     assert(rules.AdjustDeposit(338) == 338)
     assert(rules.AdjustDeposit(0) == 100)
+
+    rules.ApplyPreset("hellscream")
+    assert(rules.GetPreset() == "hellscream")
   `);
 });
 

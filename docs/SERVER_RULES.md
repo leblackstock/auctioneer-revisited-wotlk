@@ -11,7 +11,8 @@ Server rules use the existing `AucAdvancedConfig` profile system:
 - `core.serverrules.tolerancehours`
 
 No SavedVariable was added. Existing profiles and account data retain their
-original format.
+original format. Profiles without saved server-rule values default to the
+Hellscream preset; explicit saved selections continue to take precedence.
 
 ## Deposit Flow
 

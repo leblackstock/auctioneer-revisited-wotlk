@@ -10,7 +10,8 @@ Current version: `5.9.4961-Revisited.1`
 ## Server Rules
 
 Open Auctioneer's Configure window and select **Server Rules**. The settings
-belong to the active Auctioneer profile.
+belong to the active Auctioneer profile. New profiles default to the
+**Hellscream** preset; select **Standard WotLK** for upstream-compatible rules.
 
 | Preset | Custom rules | Deposit | Minimum | Duration | Tolerance |
 | --- | --- | ---: | ---: | ---: | ---: |
