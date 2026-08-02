@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Made Appraiser's BeanCount matcher include both faction and neutral Auction
+  House successes and failures without requiring a display toggle.
 - Made the Hellscream server-rule preset the default for profiles without
   saved server-rule values.
 - Added an opt-in Appraiser control that copies a clicked seller's exact

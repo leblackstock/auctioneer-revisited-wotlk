@@ -17,6 +17,7 @@ const modifiedRuntimeFiles = [
   "Auc-Advanced/Modules/Auc-Util-Appraiser/AppraiserSellerMatch.lua",
   "Auc-Advanced/Modules/Auc-Util-Appraiser/AprFrame.lua",
   "BeanCounter/BeanCounterConfig.lua",
+  "BeanCounter/BeanCounterAPI.lua",
   "BeanCounter/BeanCounterFrames.lua",
   "BeanCounter/BeanCounterMail.lua",
   "BeanCounter/PostMonitor.lua",

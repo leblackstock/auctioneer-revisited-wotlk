@@ -283,46 +283,60 @@ function lib.API.getAHSoldFailed(player, link, days, serverKey)
 		
 	local now = time()
 	local success, failed, sucessStack, failedStack = 0, 0, 0, 0
+	local completedAuctionTypes = {"completedAuctions", "completedAuctionsNeutral"}
+	local failedAuctionTypes = {"failedAuctions", "failedAuctionsNeutral"}
 	--if we want to filter to a date range then we use this, if we want EVERY trxn uses second lookup
 	--the second lookup is mesurably  faster but not noticable in real use due to not having to expand the DB. 100 trxns may have a  0.0001 sec diffrence
 	if days then
 		days = days * 86400 --days to seconds
-		if playerData["completedAuctions"][itemID] then
-			for key in pairs(playerData["completedAuctions"][itemID] ) do
-				for i, text in pairs(playerData["completedAuctions"][itemID][key]) do
-					local stack, _, _, _, _, _, _, auctime = strsplit(";", text)
-					auctime, stack = tonumber(auctime), tonumber(stack)
-					
-					if (now - auctime) < (days) then
-						success = success + 1
-						sucessStack = sucessStack + stack
+		for _, auctionType in ipairs(completedAuctionTypes) do
+			local itemData = playerData[auctionType] and playerData[auctionType][itemID]
+			if itemData then
+				for key in pairs(itemData) do
+					for i, text in pairs(itemData[key]) do
+						local stack, _, _, _, _, _, _, auctime = strsplit(";", text)
+						auctime, stack = tonumber(auctime), tonumber(stack)
+
+						if (now - auctime) < (days) then
+							success = success + 1
+							sucessStack = sucessStack + stack
+						end
 					end
 				end
 			end
 		end
-		if playerData["failedAuctions"][itemID] then
-			for key in pairs(playerData["failedAuctions"][itemID]) do
-				for i, text in pairs(playerData["failedAuctions"][itemID][key]) do
-					local stack, _, _, _, _, _, _, auctime = strsplit(";", text)
-					auctime, stack = tonumber(auctime), tonumber(stack)
-					
-					if (now - auctime) < (days) then
-						failed = failed + 1
-						failedStack = failedStack + stack
+		for _, auctionType in ipairs(failedAuctionTypes) do
+			local itemData = playerData[auctionType] and playerData[auctionType][itemID]
+			if itemData then
+				for key in pairs(itemData) do
+					for i, text in pairs(itemData[key]) do
+						local stack, _, _, _, _, _, _, auctime = strsplit(";", text)
+						auctime, stack = tonumber(auctime), tonumber(stack)
+
+						if (now - auctime) < (days) then
+							failed = failed + 1
+							failedStack = failedStack + stack
+						end
 					end
 				end
 			end
 		end
 	else
 		if private.playerData then
-			if playerData["completedAuctions"][itemID]  then
-				for key in pairs(playerData["completedAuctions"][itemID] ) do
-					success = success + #playerData["completedAuctions"][itemID][key]
+			for _, auctionType in ipairs(completedAuctionTypes) do
+				local itemData = playerData[auctionType] and playerData[auctionType][itemID]
+				if itemData then
+					for key in pairs(itemData) do
+						success = success + #itemData[key]
+					end
 				end
 			end
-			if playerData["failedAuctions"][itemID] then
-				for key in pairs(playerData["failedAuctions"][itemID]) do
-					failed = failed + #playerData["failedAuctions"][itemID][key]
+			for _, auctionType in ipairs(failedAuctionTypes) do
+				local itemData = playerData[auctionType] and playerData[auctionType][itemID]
+				if itemData then
+					for key in pairs(itemData) do
+						failed = failed + #itemData[key]
+					end
 				end
 			end
 		end
