@@ -34,10 +34,10 @@ release.
 - Confirm no `Failure for completedAuctions`, `failedAuctions`, or
   `cancelledAuctions` message is produced for the tested records.
 
-## Appraiser Seller Matching
+## Appraiser Seller Click Pricing
 
 - Select an item in Appraiser and refresh its competing auctions.
-- Enable **Match clicked seller** beneath the results.
+- Under **Click seller:**, enable **Match** beneath the results.
 - Click a seller row with both a bid and buyout.
 - Confirm Appraiser changes the item to Fixed pricing and unchecks ordinary
   price matching.
@@ -45,6 +45,15 @@ release.
   Min/ea and Buy/ea values.
 - Change the posting stack size and confirm the displayed stack totals retain
   the same per-item prices, even when Appraiser rounding is enabled.
+- With that seller still highlighted, enable **Undercut 1%**.
+- Confirm **Match** becomes unchecked and the posting price immediately changes
+  to 99% of both selected per-item prices, rounded down to whole copper.
+- Re-enable **Match** and confirm **Undercut 1%** becomes unchecked and the
+  exact selected prices are restored.
+- Click the active mode again and confirm both modes are unchecked. Select a
+  different row and confirm the current posting price remains unchanged.
+- Test a 1-copper bid and buyout and confirm **Undercut 1%** keeps both values
+  at 1 copper.
 - Alt-click the same seller and confirm the existing ignore dialog still
   opens without changing the posting price.
 - Click a bid-only auction and confirm Appraiser leaves the current price

@@ -16,7 +16,7 @@ if not AucAdvanced then return end
 local lib = AucAdvanced.GetModule("Util", "Appraiser")
 if not lib then return end
 
-function lib.GetSellerMatchPrices(selection)
+local function GetSellerPrices(selection)
 	if type(selection) ~= "table" then return end
 
 	local seller = selection[1]
@@ -27,4 +27,22 @@ function lib.GetSellerMatchPrices(selection)
 	if bid > buyout then return end
 
 	return seller, math.floor(bid), math.floor(buyout)
+end
+
+function lib.GetSellerClickPrices(selection, mode)
+	local seller, bid, buyout = GetSellerPrices(selection)
+	if not seller then return end
+
+	if mode == "undercut" then
+		bid = math.max(1, math.floor(bid * 99 / 100))
+		buyout = math.max(bid, math.floor(buyout * 99 / 100))
+	elseif mode ~= "match" then
+		return
+	end
+
+	return seller, bid, buyout
+end
+
+function lib.GetSellerMatchPrices(selection)
+	return lib.GetSellerClickPrices(selection, "match")
 end

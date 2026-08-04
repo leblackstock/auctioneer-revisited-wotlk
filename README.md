@@ -33,18 +33,23 @@ custom rules are enabled. Expirations must fall within the configured
 tolerance of the expected expiration. Sales and cancellations must fall
 within the candidate auction's effective lifetime, including tolerance.
 
-## Appraiser Seller Matching
+## Appraiser Seller Click Pricing
 
-Enable **Match clicked seller** beneath Appraiser's competing-auction table,
-then click anywhere in a seller's row. Appraiser copies that auction's exact
-per-item starting bid and buyout, switches the item to Fixed pricing, and
-disables ordinary competition matching. The checkbox does not post an auction.
-Alt-clicking a seller continues to manage the seller ignore list.
+Beneath Appraiser's competing-auction table, choose **Match** or
+**Undercut 1%** beside **Click seller:**, then click anywhere in a seller's
+row. Only one mode can be checked at a time, and clicking the active mode again
+turns seller-click pricing off. Switching modes immediately reapplies the new
+mode to the highlighted seller.
 
-Seller-matched values bypass Appraiser's optional rounding so posting a
-different stack size preserves the selected auction's per-item prices.
-Manually changing the price, pricing model, or ordinary matching option clears
-the seller-match marker.
+**Match** copies the auction's exact per-item starting bid and buyout.
+**Undercut 1%** reduces both values to 99%, rounds down to whole copper, and
+keeps each value at a minimum of 1 copper. Both modes switch the item to Fixed
+pricing and disable ordinary competition matching. Neither mode posts an
+auction, and Alt-clicking a seller continues to manage the seller ignore list.
+
+Seller-click prices bypass Appraiser's optional rounding so posting a different
+stack size preserves the selected per-item prices. Manually changing the price,
+pricing model, or ordinary matching option clears the seller-price marker.
 
 ## Installation
 

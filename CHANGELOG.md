@@ -6,9 +6,9 @@
   House successes and failures without requiring a display toggle.
 - Made the Hellscream server-rule preset the default for profiles without
   saved server-rule values.
-- Added an opt-in Appraiser control that copies a clicked seller's exact
-  per-item bid and buyout into Fixed pricing.
-- Seller-matched prices bypass the ordinary matcher and optional rounding so
+- Added mutually exclusive Appraiser controls that either match a clicked
+  seller's per-item prices or undercut both prices by 1% in Fixed pricing.
+- Seller-click prices bypass the ordinary matcher and optional rounding so
   different stack sizes retain the selected auction's per-item prices.
 
 ## 5.9.4961-Revisited.1

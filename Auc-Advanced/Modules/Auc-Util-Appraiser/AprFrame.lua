@@ -2562,9 +2562,17 @@ function private.CreateFrames()
 		end
 	end
 
-	function private.MatchSelectedSeller()
+	function private.GetSellerClickMode()
+		if frame.imageview.purchase.undercutSeller:GetChecked() then
+			return "undercut"
+		elseif frame.imageview.purchase.matchSeller:GetChecked() then
+			return "match"
+		end
+	end
+
+	function private.ApplySelectedSellerPrice(mode)
 		local selected = frame.imageview.sheet:GetSelection()
-		local seller, bid, buyout = lib.GetSellerMatchPrices(selected)
+		local seller, bid, buyout = lib.GetSellerClickPrices(selected, mode)
 		if not seller then
 			aucPrint(_TRANS('APPR_Help_SellerPriceUnavailable'))
 			return
@@ -2587,11 +2595,25 @@ function private.CreateFrames()
 		frame.UpdatePricing()
 		frame.UpdateDisplay()
 
-		aucPrint(_TRANS('APPR_Help_SellerPriceMatched'):format(
+		local message = mode == "undercut" and 'APPR_Help_SellerPriceUndercut' or 'APPR_Help_SellerPriceMatched'
+		aucPrint(_TRANS(message):format(
 			seller,
 			AucAdvanced.Coins(bid, true),
 			AucAdvanced.Coins(buyout, true)
 		))
+	end
+
+	function private.SetSellerClickMode(mode, applySelection)
+		local matchSeller = mode == "match"
+		local undercutSeller = mode == "undercut"
+		frame.imageview.purchase.matchSeller:SetChecked(matchSeller)
+		frame.imageview.purchase.undercutSeller:SetChecked(undercutSeller)
+		set("util.appraiser.matchseller", matchSeller)
+		set("util.appraiser.undercutseller", undercutSeller)
+
+		if applySelection and mode and frame.imageview.sheet:GetSelection() then
+			private.ApplySelectedSellerPrice(mode)
+		end
 	end
 
 	function private.onClick(button, row, index, mouseButton)
@@ -2615,8 +2637,9 @@ function private.CreateFrames()
 				frame.sellerIgnore.yes:SetScript("OnClick", function() BF_IgnoreList_Remove( seller ) frame.sellerIgnore:Hide() end)
 				frame.sellerIgnore.help:SetText(_TRANS('APPR_Interface_RemovePlayerIgnore'):format("|CFFFFFFFF", seller))--Remove player from ignore list %s%s
 			end
-		elseif frame.imageview.purchase.matchSeller:GetChecked() then
-			private.MatchSelectedSeller()
+		else
+			local mode = private.GetSellerClickMode()
+			if mode then private.ApplySelectedSellerPrice(mode) end
 		end
 	end
 	--ignore/unignore seller GUI
@@ -2685,13 +2708,15 @@ function private.CreateFrames()
 	})
 	frame.imageview.purchase:SetBackdropColor(0.5, 0.5, 0.5, 1)
 
+	frame.imageview.purchase.clickSellerLabel = frame.imageview.purchase:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
+	frame.imageview.purchase.clickSellerLabel:SetText(_TRANS('APPR_Interface_ClickSellerPrice'))
+
 	frame.imageview.purchase.matchSeller = CreateFrame("CheckButton", "AppraiserMatchSeller", frame.imageview.purchase, "OptionsCheckButtonTemplate")
-	frame.imageview.purchase.matchSeller:SetPoint("RIGHT", frame.imageview.purchase, "RIGHT", -135, 0)
+	frame.imageview.purchase.matchSeller:SetPoint("RIGHT", frame.imageview.purchase, "RIGHT", -191, 0)
 	frame.imageview.purchase.matchSeller:SetHeight(20)
 	frame.imageview.purchase.matchSeller:SetWidth(20)
-	frame.imageview.purchase.matchSeller:SetChecked(get("util.appraiser.matchseller"))
 	frame.imageview.purchase.matchSeller:SetScript("OnClick", function(self)
-		set("util.appraiser.matchseller", self:GetChecked() and true or false)
+		private.SetSellerClickMode(self:GetChecked() and "match" or nil, self:GetChecked())
 	end)
 	frame.imageview.purchase.matchSeller:SetScript("OnEnter", function(self)
 		return frame.SetButtonTooltip(self, _TRANS('APPR_HelpTooltip_MatchSellerPrice'))
@@ -2701,6 +2726,34 @@ function private.CreateFrames()
 	frame.imageview.purchase.matchSeller.label = frame.imageview.purchase.matchSeller:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
 	frame.imageview.purchase.matchSeller.label:SetPoint("LEFT", frame.imageview.purchase.matchSeller, "RIGHT", 0, 0)
 	frame.imageview.purchase.matchSeller.label:SetText(_TRANS('APPR_Interface_MatchSellerPrice'))
+	frame.imageview.purchase.matchSeller:SetHitRectInsets(0, 0-frame.imageview.purchase.matchSeller.label:GetWidth(), 0, 0)
+
+	frame.imageview.purchase.undercutSeller = CreateFrame("CheckButton", "AppraiserUndercutSeller", frame.imageview.purchase, "OptionsCheckButtonTemplate")
+	frame.imageview.purchase.undercutSeller:SetPoint("RIGHT", frame.imageview.purchase, "RIGHT", -94, 0)
+	frame.imageview.purchase.undercutSeller:SetHeight(20)
+	frame.imageview.purchase.undercutSeller:SetWidth(20)
+	frame.imageview.purchase.undercutSeller:SetScript("OnClick", function(self)
+		private.SetSellerClickMode(self:GetChecked() and "undercut" or nil, self:GetChecked())
+	end)
+	frame.imageview.purchase.undercutSeller:SetScript("OnEnter", function(self)
+		return frame.SetButtonTooltip(self, _TRANS('APPR_HelpTooltip_UndercutSellerPrice'))
+	end)
+	frame.imageview.purchase.undercutSeller:SetScript("OnLeave", function() return GameTooltip:Hide() end)
+
+	frame.imageview.purchase.undercutSeller.label = frame.imageview.purchase.undercutSeller:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
+	frame.imageview.purchase.undercutSeller.label:SetPoint("LEFT", frame.imageview.purchase.undercutSeller, "RIGHT", 0, 0)
+	frame.imageview.purchase.undercutSeller.label:SetText(_TRANS('APPR_Interface_UndercutSellerPrice'))
+	frame.imageview.purchase.undercutSeller:SetHitRectInsets(0, 0-frame.imageview.purchase.undercutSeller.label:GetWidth(), 0, 0)
+
+	frame.imageview.purchase.clickSellerLabel:SetPoint("RIGHT", frame.imageview.purchase.matchSeller, "LEFT", -2, 0)
+
+	if get("util.appraiser.undercutseller") then
+		private.SetSellerClickMode("undercut")
+	elseif get("util.appraiser.matchseller") then
+		private.SetSellerClickMode("match")
+	else
+		private.SetSellerClickMode()
+	end
 
 	frame.imageview.purchase.buy = CreateFrame("Button", nil, frame.imageview.purchase, "OptionsButtonTemplate")
 	frame.imageview.purchase.buy:SetPoint("TOPLEFT", frame.imageview.purchase, "TOPLEFT", 5, 0)

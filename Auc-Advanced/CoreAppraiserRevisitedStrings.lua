@@ -16,6 +16,10 @@ if not AuctioneerLocalizations or not AuctioneerLocalizations.enUS then return e
 local strings = AuctioneerLocalizations.enUS
 
 strings["APPR_Help_SellerPriceMatched"] = "Matched %s at %s bid and %s buyout per item."
-strings["APPR_Help_SellerPriceUnavailable"] = "That auction does not have a usable seller, bid, and buyout price to match."
-strings["APPR_HelpTooltip_MatchSellerPrice"] = "When enabled, clicking a seller copies that auction's exact per-item bid and buyout into Fixed pricing. Alt-click still manages the seller ignore list."
-strings["APPR_Interface_MatchSellerPrice"] = "Match clicked seller"
+strings["APPR_Help_SellerPriceUndercut"] = "Undercut %s by 1%% at %s bid and %s buyout per item."
+strings["APPR_Help_SellerPriceUnavailable"] = "That auction does not have a usable seller, bid, and buyout price."
+strings["APPR_HelpTooltip_MatchSellerPrice"] = "Click to copy the highlighted seller's exact per-item bid and buyout into Fixed pricing. Click again to turn seller-click pricing off."
+strings["APPR_HelpTooltip_UndercutSellerPrice"] = "Click to price 1% below the highlighted seller's per-item bid and buyout. Click again to turn seller-click pricing off."
+strings["APPR_Interface_ClickSellerPrice"] = "Click seller:"
+strings["APPR_Interface_MatchSellerPrice"] = "Match"
+strings["APPR_Interface_UndercutSellerPrice"] = "Undercut 1%"
